@@ -1,164 +1,134 @@
-# StormReport Module
 
-The `StormReport` module is a reusable React component for fetching and displaying weather-related reports based on location, time frame, and event type filters. It leverages configuration parameters for flexible API access, including the ability to dynamically adjust filters and settings.
+# StormReport Component
 
-## Repository Structure
-
-This repository has a two-level folder structure:
-
-- The root of the repository is the `vaisala` folder.
-- The main application code is located in the `vaisala-app` subfolder within the repository root.
-
-**Repository URL**: [https://github.com/brandon0505/vaisala.git](https://github.com/brandon0505/vaisala.git)
-
-When cloning this repository, you will receive both the `vaisala` root folder and the `vaisala-app` subfolder.
+The **StormReport** component is a reusable, configurable React module for displaying storm reports from the Xweather API based on location, time range, and event type filters.
 
 ## Table of Contents
 
+- [Project Overview](#project-overview)
+- [Features](#features)
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [Props](#props)
-- [Usage](#usage)
-- [Customization](#customization)
-- [Example](#example)
-- [Troubleshooting](#troubleshooting)
+- [Usage Guide](#usage-guide)
+- [Dependencies](#dependencies)
+
+---
+
+## Project Overview
+
+The **StormReport** component retrieves and displays storm reports for a specified location, allowing users to filter by time range and event type. Built with Tailwind CSS for styling and designed to be embedded into various React applications.
+
+## Features
+
+- **Dynamic Time Filter**: Filter reports for the past 24 hours, 48 hours, or 7 days.
+- **Event Type Filter**: Display reports related to wind, hail, tornadoes, or floods.
+- **Reusable Component**: Self-contained module that can be integrated into any React application.
+- **User-Friendly Design**: Optimized for touch screens and adaptable to various screen sizes.
+- **Dynamic Configuration**: Event types, time filters, and colors/icons are dynamically configurable.
 
 ---
 
 ## Installation
 
 1. **Clone the Repository**:
-
    ```bash
    git clone https://github.com/brandon0505/vaisala.git
+   ```
+
+2. **Navigate to the Project Directory**:
+   ```bash
    cd vaisala/vaisala-app
    ```
 
-2. **Install Dependencies**:
-   Ensure you have `npm` or `yarn` installed, then run:
-
+3. **Install Dependencies**:
    ```bash
    npm install
    ```
 
-   or
-
+4. **Start the Development Server**:
    ```bash
-   yarn install
-   ```
-
-3. **Set up FontAwesome**:
-   Ensure FontAwesome is installed and imported for the icons used in the report cards. You can add it as a dependency if not included:
-   ```bash
-   npm install --save @fortawesome/react-fontawesome
+   npm run dev
    ```
 
 ---
 
 ## Configuration
 
-The `StormReport` module relies on certain configurations for API calls and customizable filters.
+Before using the component, ensure the following configurations are set up:
 
-### Required Configurations
+### Required Props for **StormReport Component**
 
-These props must be provided to the `StormReport` component for it to function properly:
+| Prop           | Type       | Description                                                                 |
+|----------------|------------|-----------------------------------------------------------------------------|
+| `client_id`    | `string`   | Xweather API client ID                                                     |
+| `client_secret`| `string`   | Xweather API client secret                                                 |
+| `defaultLocation` | `string` | Default search location (latitude/longitude, ZIP code, or city/state)       |
+| `defaultTimeFilter` | `TimeFilterKeys` | Default time filter (e.g., `24H`, `48H`, `7D`)                        |
+| `defaultEventTypes` | `EventTypeKeys[]` | Default array of event types to display (e.g., `["flood", "wind"]`) |
 
-- **client_id**: The unique client ID for API access.
-- **client_secret**: The secret key for API access.
+### Constants Configuration
 
-### Optional Configurations
+The component uses dynamic time filter and event type configurations, defined in `/src/constants/TimeFilterConfig.js` and `/src/constants/EventTypeConfig.js`:
 
-- **defaultLocation**: The default location for the report search, specified as a string (e.g., `"New York, NY"` or `"90210"`).
-- **defaultTimeFilter**: A default time range, specified as one of the options defined in `TimeFilterConfig` (e.g., `"24H"` or `"7D"`).
-- **defaultEventTypes**: An array of default event types, chosen from `EventTypeOptions` (e.g., `["tornado", "flood"]`).
+- **Time Filters**: Specify key, label, and API parameter for time filters.
+- **Event Types**: Specify event types with labels, icons, and color styles.
 
----
+Example Configuration:
+```javascript
+// TimeFilterConfig.js
+export const timeFilterOptions = [
+  { key: '24H', label: 'Past 24 Hours', urlParam: '-24hours' },
+  { key: '48H', label: 'Past 48 Hours', urlParam: '-48hours' },
+  { key: '7D', label: 'Past 7 Days', urlParam: '-7days' }
+];
 
-## Props
-
-### `StormReportProps`
-
-These props configure the behavior of the `StormReport` component:
-
-| Prop                | Type              | Required | Description                                                |
-| ------------------- | ----------------- | -------- | ---------------------------------------------------------- |
-| `client_id`         | `string`          | Yes      | Client ID for API authentication                           |
-| `client_secret`     | `string`          | Yes      | Client secret for API authentication                       |
-| `defaultLocation`   | `string`          | No       | Default location to load initially                         |
-| `defaultTimeFilter` | `TimeFilterKeys`  | No       | Default time filter option for reports                     |
-| `defaultEventTypes` | `EventTypeKeys[]` | No       | Array of default event types to display in the filter form |
-
----
-
-## Usage
-
-To integrate the `StormReport` module into your React application:
-
-1. Import the `StormReport` component.
-2. Pass in the required `client_id` and `client_secret`.
-3. Optionally configure default values for location, time filters, and event types.
-
-```typescript
-import React from 'react';
-import StormReport from './components/StormReport';
-
-const App = () => {
-  return (
-    <div className="App">
-      <StormReport
-        client_id="YOUR_CLIENT_ID"
-        client_secret="YOUR_CLIENT_SECRET"
-        defaultLocation="Los Angeles, CA"
-        defaultTimeFilter="24H"
-        defaultEventTypes={["tornado", "hail"]}
-      />
-    </div>
-  );
-};
-
-export default App;
+// EventTypeConfig.js
+export const eventTypeOptions = [
+  { key: 'flood', label: 'Flood', icon: 'water', color: 'text-blue-500' },
+  { key: 'hail', label: 'Hail', icon: 'cloud-meatball', color: 'text-gray-500' },
+  { key: 'tornado', label: 'Tornado', icon: 'tornado', color: 'text-red-500' },
+  { key: 'wind', label: 'Wind', icon: 'wind', color: 'text-green-500' }
+];
 ```
 
-### Explanation
+---
 
-- **Filters**: After the initial search, adjusting the time filter or event type will automatically trigger a new fetch for updated results.
+## Usage Guide
+
+To use the **StormReport** component in your project:
+
+1. **Import the Component**:
+   ```javascript
+   import StormReport from './components/StormReport';
+   ```
+
+2. **Use the Component in Your App**:
+   ```javascript
+   function App() {
+     return (
+       <StormReport
+         client_id="YOUR_CLIENT_ID"
+         client_secret="YOUR_CLIENT_SECRET"
+         defaultLocation="New York, NY"
+         defaultTimeFilter="24H"
+         defaultEventTypes={["flood", "hail"]}
+       />
+     );
+   }
+   ```
+
+3. **Customize with Props**: You can adjust `defaultLocation`, `defaultTimeFilter`, and `defaultEventTypes` based on the initial display requirements.
 
 ---
 
-## Customization
+## Dependencies
 
-The following files allow for further customization and adjustments to the filters and display settings:
+- **React**: UI Library
+- **Tailwind CSS**: For styling
+- **Font Awesome**: Icon library for event type icons
 
-- **TimeFilterConfig.ts**: Defines time-based filter options (e.g., `24H`, `48H`) and includes `urlParam` mappings and display names.
-- **EventTypeConfig.ts**: Defines event type options (e.g., `tornado`, `hail`) and includes FontAwesome icons, colors, and any labels for observed values.
-
----
-
-## Example
-
-Here is an example configuration for a `StormReport` with a Los Angeles location and selected tornado and hail filters:
-
-```typescript
-<StormReport
-  client_id="YOUR_CLIENT_ID"
-  client_secret="YOUR_CLIENT_SECRET"
-  defaultLocation="Los Angeles, CA"
-  defaultTimeFilter="24H"
-  defaultEventTypes={["tornado", "hail"]}
-/>
-```
-
-This configuration allows users to view storm reports for Los Angeles within a 24-hour timeframe, specifically looking for tornado and hail events.
+Ensure all dependencies are installed to avoid missing features or styling issues.
 
 ---
 
-## Troubleshooting
-
-- **Missing Data or Icons**: Ensure that `client_id` and `client_secret` are correct and have access to the weather data API.
-- **API Errors**: Check the API status and review network requests in the browser's developer tools for more details on any errors.
-
-For further customization or questions, please refer to the project documentation or contact the maintainer.
-
----
-
-This `StormReport` module is now ready for integration into any React application with the provided API credentials and default configurations.
+This component is now ready to be integrated and customized based on your application’s specific needs. Enjoy using the StormReport component!
